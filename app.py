@@ -93,7 +93,7 @@ print(answer)
         if result == "10000":  
             return {  
                 "status": "VERIFIED",  
-                "answer": "\u20b910,000",  
+                "answer": "Rs 10,000",  
                 "reason": "The generated proof code executed successfully.",  
                 "code": code  
             }  
@@ -109,4 +109,3 @@ print(answer)
         result = verify_code(code)  
         if result == "7000":  
             return {  
-                "status": "
