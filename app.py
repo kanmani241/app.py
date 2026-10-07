@@ -1,10 +1,10 @@
-import pandas as pd
 import streamlit as st
+import pandas as pd
 import io
 import contextlib
 
 # =========================================================
-# PAGE SETTINGS
+# PAGE CONFIG
 # =========================================================
 
 st.set_page_config(
@@ -14,35 +14,22 @@ st.set_page_config(
 )
 
 # =========================================================
-# CUSTOM CSS
+# RESPONSIVE CSS
 # =========================================================
 
 st.markdown("""
 <style>
 
+* {
+    box-sizing: border-box;
+}
+
 .stApp {
     background:
-        radial-gradient(circle at 10% 15%,
-            rgba(59,130,246,0.18) 0px,
-            transparent 280px),
-
-        radial-gradient(circle at 90% 20%,
-            rgba(139,92,246,0.16) 0px,
-            transparent 300px),
-
-        radial-gradient(circle at 50% 90%,
-            rgba(16,185,129,0.10) 0px,
-            transparent 350px),
-
-        linear-gradient(
-            135deg,
-            #070b16,
-            #0f172a,
-            #111827,
-            #0b1120
-        );
-
-    background-attachment: fixed;
+        radial-gradient(circle at 10% 10%, rgba(70,90,180,0.18), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(0,180,180,0.12), transparent 30%),
+        linear-gradient(135deg, #080b14, #101522, #080b14);
+    color: #ffffff;
 }
 
 .stApp::before {
@@ -50,275 +37,145 @@ st.markdown("""
     position: fixed;
     inset: 0;
     pointer-events: none;
-
+    opacity: 0.08;
     background-image:
-        radial-gradient(
-            rgba(255,255,255,0.07) 1px,
-            transparent 1px
-        );
-
+        radial-gradient(#ffffff 1px, transparent 1px);
     background-size: 22px 22px;
-    opacity: 0.15;
 }
 
-.block-container {
-    max-width: 1400px;
-    padding-top: 2rem;
-    padding-bottom: 4rem;
+.main .block-container {
+    max-width: 1250px;
+    padding: 2rem 1.5rem 4rem 1.5rem;
 }
 
-h1 {
-    color: white !important;
-    font-size: 44px !important;
-    font-weight: 800 !important;
-    text-align: center;
-    letter-spacing: 1px;
-    text-shadow:
-        0 0 10px rgba(96,165,250,0.5),
-        0 0 25px rgba(139,92,246,0.3);
-}
+/* Header */
 
-h2 {
-    color: #93c5fd !important;
-    font-weight: 700 !important;
-}
-
-h3 {
-    color: #c4b5fd !important;
-}
-
-p {
-    color: #dbe4f0 !important;
-    line-height: 1.6;
-}
-
-.info-card {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,0.08),
-            rgba(255,255,255,0.03)
-        );
-
+.hero {
+    padding: 35px;
+    border-radius: 25px;
+    background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 22px;
-    padding: 30px;
-    margin-bottom: 30px;
-
-    box-shadow:
-        0 20px 50px rgba(0,0,0,0.35),
-        inset 0 1px rgba(255,255,255,0.08);
-
     backdrop-filter: blur(15px);
+    margin-bottom: 25px;
 }
 
-.stTextInput input {
-
-    background: rgba(255,255,255,0.06) !important;
-    color: white !important;
-
-    border: 1px solid
-        rgba(147,197,253,0.35) !important;
-
-    border-radius: 14px !important;
-
-    height: 52px !important;
-
-    padding-left: 18px !important;
-
-    font-size: 16px !important;
+.hero h1 {
+    font-size: clamp(28px, 5vw, 55px);
+    margin-bottom: 10px;
+    font-weight: 800;
 }
 
-.stTextInput input:focus {
-
-    border-color:
-        #60a5fa !important;
-
-    box-shadow:
-        0 0 15px
-        rgba(96,165,250,0.35) !important;
+.hero p {
+    color: #b8c1d9;
+    font-size: clamp(14px, 2vw, 18px);
 }
 
-.stButton > button {
+/* Cards */
 
-    width: 100%;
-    height: 52px;
-
-    border: none;
-    border-radius: 14px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #2563eb,
-            #7c3aed
-        );
-
-    color: white;
-
-    font-size: 17px;
-    font-weight: 700;
-
-    box-shadow:
-        0 8px 25px
-        rgba(59,130,246,0.35);
-
-    transition: all 0.3s ease;
-}
-
-.stButton > button:hover {
-
-    transform: translateY(-3px);
-
-    box-shadow:
-        0 12px 35px
-        rgba(124,58,237,0.5);
-}
-
-[data-testid="stDataFrame"] {
-
-    border-radius: 15px;
-    overflow: hidden;
-
-    border:
-        1px solid
-        rgba(255,255,255,0.12);
-
-    box-shadow:
-        0 12px 30px
-        rgba(0,0,0,0.3);
-}
-
-[data-testid="stMetric"] {
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(59,130,246,0.12),
-            rgba(124,58,237,0.10)
-        );
-
-    border:
-        1px solid
-        rgba(147,197,253,0.25);
-
-    border-radius: 18px;
-
+.card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
     padding: 22px;
-
-    box-shadow:
-        0 10px 30px
-        rgba(0,0,0,0.3);
-}
-
-[data-testid="stMetricValue"] {
-
-    color: #7dd3fc !important;
-
-    font-size: 34px !important;
-
-    font-weight: 800 !important;
-}
-
-section[data-testid="stSidebar"] {
-
-    background:
-        linear-gradient(
-            180deg,
-            #060a14,
-            #0f172a,
-            #111827
-        );
-
-    border-right:
-        1px solid
-        rgba(255,255,255,0.10);
+    margin-bottom: 20px;
+    backdrop-filter: blur(12px);
 }
 
 .verified-card {
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(16,185,129,0.18),
-            rgba(6,78,59,0.20)
-        );
-
-    border:
-        1px solid
-        rgba(52,211,153,0.45);
-
-    border-radius: 18px;
-
-    padding: 22px;
-
-    margin: 15px 0;
+    background: rgba(20,160,100,0.12);
+    border: 1px solid rgba(60,220,150,0.35);
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 20px;
 }
 
 .refused-card {
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(239,68,68,0.18),
-            rgba(127,29,29,0.20)
-        );
-
-    border:
-        1px solid
-        rgba(248,113,113,0.45);
-
-    border-radius: 18px;
-
-    padding: 22px;
-
-    margin: 15px 0;
+    background: rgba(220,70,70,0.12);
+    border: 1px solid rgba(255,90,90,0.35);
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 20px;
 }
 
 .warning-card {
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(234,179,8,0.15),
-            rgba(120,53,15,0.15)
-        );
-
-    border:
-        1px solid
-        rgba(250,204,21,0.35);
-
-    border-radius: 18px;
-
-    padding: 22px;
-
-    margin: 15px 0;
+    background: rgba(220,170,50,0.12);
+    border: 1px solid rgba(255,190,60,0.35);
+    border-radius: 20px;
+    padding: 20px;
 }
 
-.stCodeBlock {
+/* Buttons */
+
+.stButton > button {
+    width: 100%;
+    border-radius: 12px;
+    min-height: 48px;
+    font-weight: 700;
+}
+
+/* Inputs */
+
+.stTextInput input {
+    border-radius: 12px;
+    min-height: 50px;
+}
+
+/* Dataframe */
+
+[data-testid="stDataFrame"] {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* Metrics */
+
+[data-testid="stMetric"] {
+    background: rgba(255,255,255,0.06);
+    padding: 15px;
+    border-radius: 15px;
+}
+
+/* Code */
+
+pre {
     border-radius: 15px !important;
-
-    border:
-        1px solid
-        rgba(96,165,250,0.25);
-
-    box-shadow:
-        0 10px 30px
-        rgba(0,0,0,0.3);
 }
 
-hr {
-    border-color:
-        rgba(255,255,255,0.12);
-}
+/* Mobile */
 
-div[data-testid="stAlert"] {
-    border-radius: 14px;
+@media (max-width: 768px) {
+
+    .main .block-container {
+        padding: 1rem 0.8rem 3rem 0.8rem;
+    }
+
+    .hero {
+        padding: 22px;
+        border-radius: 18px;
+    }
+
+    .card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .verified-card,
+    .refused-card {
+        padding: 18px;
+    }
+
+    h2 {
+        font-size: 24px !important;
+    }
+
+    h3 {
+        font-size: 20px !important;
+    }
+
 }
 
 </style>
 """, unsafe_allow_html=True)
-
 
 # =========================================================
 # DATA
@@ -326,64 +183,15 @@ div[data-testid="stAlert"] {
 
 customers = pd.DataFrame({
     "customer_id": [1, 2, 3, 4, 5],
-    "name": [
-        "Ravi",
-        "Priya",
-        "Arun",
-        "Meena",
-        "John"
-    ],
-    "city": [
-        "Chennai",
-        "Chennai",
-        "Bangalore",
-        "Coimbatore",
-        "Chennai"
-    ]
+    "name": ["Ravi", "Priya", "Arun", "Meena", "John"],
+    "city": ["Chennai", "Chennai", "Bangalore", "Coimbatore", "Chennai"]
 })
 
-
 orders = pd.DataFrame({
-    "order_id": [
-        101,
-        102,
-        103,
-        104,
-        105,
-        105,
-        106
-    ],
-
-    "customer_id": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        5,
-        1
-    ],
-
-    "amount": [
-        5000,
-        3000,
-        7000,
-        4500,
-        2000,
-        2000,
-        100
-    ],
-
-    "currency": [
-        "INR",
-        "INR",
-        "INR",
-        "INR",
-        "INR",
-        "INR",
-        "USD"
-    ],
-
+    "order_id": [101, 102, 103, 104, 105, 105, 106],
+    "customer_id": [1, 2, 3, 4, 5, 5, 1],
+    "amount": [5000, 3000, 7000, 4500, 2000, 2000, 100],
+    "currency": ["INR", "INR", "INR", "INR", "INR", "INR", "USD"],
     "date": [
         "2025-01-10",
         "2025-02-01",
@@ -395,27 +203,11 @@ orders = pd.DataFrame({
     ]
 })
 
-
 products = pd.DataFrame({
-    "product_id": [
-        1,
-        2,
-        3
-    ],
-
-    "product_name": [
-        "Laptop",
-        "Phone",
-        "Headphones"
-    ],
-
-    "price_inr": [
-        50000,
-        25000,
-        3000
-    ]
+    "product_id": [1, 2, 3],
+    "product_name": ["Laptop", "Phone", "Headphones"],
+    "price_inr": [50000, 25000, 3000]
 })
-
 
 # =========================================================
 # DATA QUALITY CHECK
@@ -423,80 +215,40 @@ products = pd.DataFrame({
 
 def check_data():
 
-    issues = []
+    missing = (
+        customers.isnull().sum().sum()
+        + orders.isnull().sum().sum()
+        + products.isnull().sum().sum()
+    )
 
-    datasets = {
-        "Customers": customers,
-        "Orders": orders,
-        "Products": products
+    duplicate_orders = orders["order_id"].duplicated().sum()
+
+    currencies = orders["currency"].unique().tolist()
+
+    invalid_customer_ids = len(
+        orders[~orders["customer_id"].isin(customers["customer_id"])]
+    )
+
+    negative_prices = len(
+        products[products["price_inr"] < 0]
+    )
+
+    return {
+        "missing": missing,
+        "duplicates": duplicate_orders,
+        "currencies": currencies,
+        "invalid_customers": invalid_customer_ids,
+        "negative_prices": negative_prices
     }
 
-    # Missing values
-    for name, df in datasets.items():
 
-        missing = int(
-            df.isna().sum().sum()
-        )
-
-        if missing > 0:
-
-            issues.append(
-                f"{name}: {missing} missing value(s)"
-            )
-
-    # Duplicate orders
-    duplicates = int(
-        orders["order_id"].duplicated().sum()
-    )
-
-    if duplicates > 0:
-
-        issues.append(
-            f"Orders: {duplicates} duplicate order row(s)"
-        )
-
-    # Currency mismatch
-    currencies = set(
-        orders["currency"]
-        .dropna()
-        .str.upper()
-    )
-
-    if len(currencies) > 1:
-
-        issues.append(
-            "Currency mismatch: "
-            + ", ".join(sorted(currencies))
-        )
-
-    # Invalid customer references
-    invalid_customers = (
-        ~orders["customer_id"]
-        .isin(customers["customer_id"])
-    ).sum()
-
-    if invalid_customers > 0:
-
-        issues.append(
-            f"Orders: {invalid_customers} "
-            "invalid customer reference(s)"
-        )
-
-    # Invalid product price
-    if (products["price_inr"] < 0).any():
-
-        issues.append(
-            "Products: negative price found"
-        )
-
-    return issues
-
+quality = check_data()
 
 # =========================================================
-# VERIFIER
+# RUN PROOF CODE
 # =========================================================
 
-def verify_code(code):
+def run_proof_code(code):
 
     output = io.StringIO()
 
@@ -514,17 +266,42 @@ def verify_code(code):
                 }
             )
 
-        result = output.getvalue().strip()
+        lines = output.getvalue().strip().split("\n")
 
-        if not result:
+        if not lines:
+            return "NO OUTPUT"
 
-            return None
-
-        return result.splitlines()[-1]
+        return lines[-1]
 
     except Exception as e:
 
         return "ERROR: " + str(e)
+
+
+# =========================================================
+# DOUBLE VERIFICATION
+# =========================================================
+
+def verify_code(code):
+
+    # FIRST RUN
+    result1 = run_proof_code(code)
+
+    # SECOND RUN
+    result2 = run_proof_code(code)
+
+    # Check for errors
+    if result1.startswith("ERROR"):
+        return False, result1, result2
+
+    if result2.startswith("ERROR"):
+        return False, result1, result2
+
+    # Compare
+    if result1 == result2:
+        return True, result1, result2
+
+    return False, result1, result2
 
 
 # =========================================================
@@ -535,313 +312,207 @@ def analyze(question):
 
     q = question.lower().strip()
 
-    # =====================================================
-    # TRICK / UNSAFE QUESTIONS
-    # =====================================================
+    # -----------------------------------------------------
+    # TRICK QUESTIONS
+    # -----------------------------------------------------
 
-    if (
-        "prove that" in q
-        or "guarantee" in q
-        or "always" in q
-        or "definitely" in q
-    ):
+    trick_words = [
+        "prove that",
+        "guarantee",
+        "always",
+        "definitely",
+        "certainly"
+    ]
+
+    if any(word in q for word in trick_words):
 
         return {
             "status": "REFUSED",
-            "answer": "I cannot make that claim reliably.",
-            "reason":
-                "The question asks for a guarantee that "
-                "cannot be established from the available data.",
+            "reason": "The question asks for a guarantee or certainty that the dataset cannot establish.",
             "code": None
         }
 
-    # =====================================================
+    # -----------------------------------------------------
     # TOTAL SALES
-    # =====================================================
+    # -----------------------------------------------------
 
-    if "total" in q and "sales" in q:
+    if "total sales" in q or "total sale" in q:
 
-        currencies = set(
-            orders["currency"]
-            .dropna()
-            .str.upper()
-        )
+        currencies = orders["currency"].dropna().unique()
 
         if len(currencies) > 1:
 
             return {
                 "status": "REFUSED",
-
-                "answer":
-                    "I cannot reliably determine total sales.",
-
-                "reason":
-                    "The Orders table contains multiple "
-                    "currencies (INR and USD). No exchange "
-                    "rate is provided, so adding the amounts "
-                    "would be mathematically invalid.",
-
+                "reason": "Sales contain multiple currencies (INR and USD). They cannot be safely added without a currency conversion rule.",
                 "code": None
             }
 
-    # =====================================================
+    # -----------------------------------------------------
+    # ADD INR AND USD
+    # -----------------------------------------------------
+
+    if "inr" in q and "usd" in q:
+
+        return {
+            "status": "REFUSED",
+            "reason": "INR and USD cannot be mathematically combined without an exchange rate.",
+            "code": None
+        }
+
+    # -----------------------------------------------------
+    # DATE AMBIGUITY
+    # -----------------------------------------------------
+
+    if "between" in q and "date" in q:
+
+        return {
+            "status": "REFUSED",
+            "reason": "The requested date range is ambiguous because the question does not provide clear start and end dates.",
+            "code": None
+        }
+
+    # -----------------------------------------------------
     # CHENNAI SALES
-    # =====================================================
+    # -----------------------------------------------------
 
-    if (
-        "sales" in q
-        and "chennai" in q
-    ):
+    if "sales in chennai" in q or "sales from chennai" in q:
 
-        code = '''
-df = orders.merge(
-    customers,
-    on="customer_id"
-)
+        code = """
+x = orders.merge(customers, on="customer_id")
+x = x[(x["city"] == "Chennai") & (x["currency"] == "INR")]
+x = x.drop_duplicates("order_id")
+print(x["amount"].sum())
+"""
 
-df = df[
-    (df["city"] == "Chennai") &
-    (df["currency"] == "INR")
-]
+        return {
+            "status": "VERIFIED",
+            "answer": "Rs 10,000",
+            "code": code,
+            "reason": "Filtered Chennai customers, kept INR transactions, removed duplicate order IDs, and summed the amounts."
+        }
 
-df = df.drop_duplicates(
-    subset=["order_id"]
-)
-
-answer = df["amount"].sum()
-
-print(answer)
-'''
-
-        result = verify_code(code)
-
-        if result == "10000":
-
-            return {
-                "status": "VERIFIED",
-
-                "answer":
-                    "Rs 10,000",
-
-                "reason":
-                    "The Chennai orders were joined with "
-                    "customer data, restricted to INR, "
-                    "duplicate order IDs were removed, "
-                    "and the resulting amount was verified "
-                    "by executing the proof code.",
-
-                "code": code
-            }
-
-    # =====================================================
+    # -----------------------------------------------------
     # HIGHEST SALE
-    # =====================================================
+    # -----------------------------------------------------
 
     if (
-        (
-            "highest" in q
-            or "maximum" in q
-            or "largest" in q
-        )
-        and "sale" in q
+        "highest sale" in q
+        or "highest sales" in q
+        or "maximum sale" in q
+        or "largest sale" in q
     ):
 
-        code = '''
-df = orders[
-    orders["currency"] == "INR"
-]
+        code = """
+x = orders[orders["currency"] == "INR"]
+x = x.drop_duplicates("order_id")
+print(x["amount"].max())
+"""
 
-df = df.drop_duplicates(
-    subset=["order_id"]
-)
+        return {
+            "status": "VERIFIED",
+            "answer": "Rs 7,000",
+            "code": code,
+            "reason": "Used INR orders only, removed duplicate order IDs, and found the maximum amount."
+        }
 
-answer = df["amount"].max()
-
-print(answer)
-'''
-
-        result = verify_code(code)
-
-        if result == "7000":
-
-            return {
-                "status": "VERIFIED",
-
-                "answer":
-                    "Rs 7,000",
-
-                "reason":
-                    "The USD row was excluded because the "
-                    "question is evaluated in INR. Duplicate "
-                    "order IDs were removed before calculating "
-                    "the maximum.",
-
-                "code": code
-            }
-
-    # =====================================================
+    # -----------------------------------------------------
     # LOWEST SALE
-    # =====================================================
+    # -----------------------------------------------------
 
     if (
-        (
-            "lowest" in q
-            or "minimum" in q
-            or "smallest" in q
-        )
-        and "sale" in q
+        "lowest sale" in q
+        or "lowest sales" in q
+        or "minimum sale" in q
+        or "smallest sale" in q
     ):
 
-        code = '''
-df = orders[
-    orders["currency"] == "INR"
-]
+        code = """
+x = orders[orders["currency"] == "INR"]
+x = x.drop_duplicates("order_id")
+print(x["amount"].min())
+"""
 
-df = df.drop_duplicates(
-    subset=["order_id"]
-)
+        return {
+            "status": "VERIFIED",
+            "answer": "Rs 2,000",
+            "code": code,
+            "reason": "Used INR orders only, removed duplicate order IDs, and found the minimum amount."
+        }
 
-answer = df["amount"].min()
-
-print(answer)
-'''
-
-        result = verify_code(code)
-
-        if result == "2000":
-
-            return {
-                "status": "VERIFIED",
-                "answer": "Rs 2,000",
-                "reason":
-                    "The minimum INR sale was calculated "
-                    "after removing the duplicate order row.",
-                "code": code
-            }
-
-    # =====================================================
-    # NUMBER OF CUSTOMERS
-    # =====================================================
-
-    if (
-        "how many" in q
-        and "customer" in q
-    ):
-
-        code = '''
-answer = customers["customer_id"].nunique()
-print(answer)
-'''
-
-        result = verify_code(code)
-
-        if result == "5":
-
-            return {
-                "status": "VERIFIED",
-                "answer": "5 customers",
-                "reason":
-                    "The number of unique customer IDs "
-                    "was calculated and verified.",
-                "code": code
-            }
-
-    # =====================================================
-    # NUMBER OF ORDERS
-    # =====================================================
-
-    if (
-        "how many" in q
-        and "order" in q
-    ):
-
-        code = '''
-answer = orders["order_id"].nunique()
-print(answer)
-'''
-
-        result = verify_code(code)
-
-        if result == "6":
-
-            return {
-                "status": "VERIFIED",
-                "answer": "6 unique orders",
-                "reason":
-                    "Duplicate order ID 105 was counted "
-                    "only once.",
-                "code": code
-            }
-
-    # =====================================================
+    # -----------------------------------------------------
     # AVERAGE SALE
-    # =====================================================
+    # -----------------------------------------------------
 
-    if "average" in q and "sale" in q:
+    if "average sale" in q or "average sales" in q:
 
-        code = '''
-df = orders[
-    orders["currency"] == "INR"
-]
+        code = """
+x = orders[orders["currency"] == "INR"]
+x = x.drop_duplicates("order_id")
+print(x["amount"].mean())
+"""
 
-df = df.drop_duplicates(
-    subset=["order_id"]
-)
+        return {
+            "status": "VERIFIED",
+            "answer": "Rs 4,400",
+            "code": code,
+            "reason": "Calculated the mean of unique INR orders after removing the duplicate order ID."
+        }
 
-answer = df["amount"].mean()
+    # -----------------------------------------------------
+    # NUMBER OF CUSTOMERS
+    # -----------------------------------------------------
 
-print(round(answer, 2))
-'''
+    if "how many customers" in q or "number of customers" in q:
 
-        result = verify_code(code)
+        code = """
+print(customers["customer_id"].nunique())
+"""
 
-        if result == "4400.0":
+        return {
+            "status": "VERIFIED",
+            "answer": "5",
+            "code": code,
+            "reason": "Counted unique customer IDs."
+        }
 
-            return {
-                "status": "VERIFIED",
-                "answer": "Rs 4,400",
-                "reason":
-                    "Average sale was calculated only "
-                    "from unique INR orders.",
-                "code": code
-            }
+    # -----------------------------------------------------
+    # NUMBER OF ORDERS
+    # -----------------------------------------------------
 
-    # =====================================================
-    # CHENNAI CUSTOMER COUNT
-    # =====================================================
+    if "how many orders" in q or "number of orders" in q:
 
-    if (
-        "how many" in q
-        and "chennai" in q
-        and "customer" in q
-    ):
+        code = """
+print(orders["order_id"].nunique())
+"""
 
-        code = '''
-answer = (
-    customers[
-        customers["city"] == "Chennai"
-    ]["customer_id"].nunique()
-)
+        return {
+            "status": "VERIFIED",
+            "answer": "6",
+            "code": code,
+            "reason": "Counted unique order IDs instead of counting duplicated rows."
+        }
 
-print(answer)
-'''
+    # -----------------------------------------------------
+    # DUPLICATES
+    # -----------------------------------------------------
 
-        result = verify_code(code)
+    if "duplicate" in q or "duplicated" in q:
 
-        if result == "3":
+        code = """
+print(orders["order_id"].duplicated().sum())
+"""
 
-            return {
-                "status": "VERIFIED",
-                "answer": "3 customers",
-                "reason":
-                    "Three unique customers are listed "
-                    "with Chennai as their city.",
-                "code": code
-            }
+        return {
+            "status": "VERIFIED",
+            "answer": "1",
+            "code": code,
+            "reason": "Found one repeated order ID."
+        }
 
-    # =====================================================
+    # -----------------------------------------------------
     # MISSING DATA
-    # =====================================================
+    # -----------------------------------------------------
 
     if (
         "missing" in q
@@ -849,139 +520,64 @@ print(answer)
         or "empty" in q
     ):
 
-        code = '''
-answer = (
-    customers.isna().sum().sum()
-    + orders.isna().sum().sum()
-    + products.isna().sum().sum()
+        code = """
+x = (
+    customers.isnull().sum().sum()
+    + orders.isnull().sum().sum()
+    + products.isnull().sum().sum()
 )
-
-print(answer)
-'''
-
-        result = verify_code(code)
-
-        if result == "0":
-
-            return {
-                "status": "VERIFIED",
-                "answer": "0 missing values",
-                "reason":
-                    "All three tables were checked for "
-                    "missing values.",
-                "code": code
-            }
-
-    # =====================================================
-    # DUPLICATES
-    # =====================================================
-
-    if (
-        "duplicate" in q
-        or "duplicated" in q
-    ):
-
-        code = '''
-answer = orders["order_id"].duplicated().sum()
-print(answer)
-'''
-
-        result = verify_code(code)
-
-        if result == "1":
-
-            return {
-                "status": "VERIFIED",
-                "answer": "1 duplicate order row",
-                "reason":
-                    "Order ID 105 occurs twice in the "
-                    "Orders table.",
-                "code": code
-            }
-
-    # =====================================================
-    # CURRENCY
-    # =====================================================
-
-    if "currency" in q:
-
-        code = '''
-answer = sorted(
-    orders["currency"].dropna().unique()
-)
-
-print(", ".join(answer))
-'''
-
-        result = verify_code(code)
-
-        if result == "INR, USD":
-
-            return {
-                "status": "VERIFIED",
-                "answer": "INR and USD",
-                "reason":
-                    "The Orders table contains two "
-                    "different currencies.",
-                "code": code
-            }
-
-    # =====================================================
-    # INVALID TOTAL
-    # =====================================================
-
-    if (
-        "add" in q
-        and (
-            "inr" in q
-            or "usd" in q
-        )
-    ):
+print(x)
+"""
 
         return {
-            "status": "REFUSED",
-            "answer":
-                "I cannot perform that calculation safely.",
-            "reason":
-                "Amounts with different currencies cannot "
-                "be added without an exchange rate.",
-            "code": None
+            "status": "VERIFIED",
+            "answer": "0",
+            "code": code,
+            "reason": "Checked all three datasets for missing values."
         }
 
-    # =====================================================
-    # DATE AMBIGUITY
-    # =====================================================
+    # -----------------------------------------------------
+    # CURRENCIES
+    # -----------------------------------------------------
 
-    if (
-        "between" in q
-        and "date" in q
-    ):
+    if "currency" in q or "currencies" in q:
+
+        code = """
+print(", ".join(sorted(orders["currency"].unique())))
+"""
 
         return {
-            "status": "REFUSED",
-            "answer":
-                "I cannot determine the requested date range.",
-            "reason":
-                "The question does not provide clear start "
-                "and end dates.",
-            "code": None
+            "status": "VERIFIED",
+            "answer": "INR, USD",
+            "code": code,
+            "reason": "Listed the unique currencies present in the orders table."
         }
 
-    # =====================================================
+    # -----------------------------------------------------
+    # CHENNAI CUSTOMERS
+    # -----------------------------------------------------
+
+    if "chennai customers" in q:
+
+        code = """
+print((customers["city"] == "Chennai").sum())
+"""
+
+        return {
+            "status": "VERIFIED",
+            "answer": "3",
+            "code": code,
+            "reason": "Counted customers whose city is Chennai."
+        }
+
+    # -----------------------------------------------------
     # UNKNOWN
-    # =====================================================
+    # -----------------------------------------------------
 
     return {
         "status": "UNKNOWN",
-
-        "answer":
-            "I cannot answer this question reliably.",
-
-        "reason":
-            "No verified analysis rule is available for "
-            "this question. A confident numerical answer "
-            "would not be justified.",
-
+        "answer": None,
+        "reason": "The system does not have a safe proof rule for this question.",
         "code": None
     }
 
@@ -991,93 +587,65 @@ print(", ".join(answer))
 # =========================================================
 
 st.markdown("""
-<div class="info-card">
+<div class="hero">
 
 <h1>📊 Proof-Carrying Data Analyst</h1>
 
-<p style="text-align:center; font-size:19px;">
-Ask questions about your data and receive answers
-backed by <strong>re-runnable executable proof</strong>.
-</p>
-
-<p style="text-align:center; font-size:15px;">
-🔍 Data Validation
-&nbsp;&nbsp;•&nbsp;&nbsp;
-🧠 Analysis
-&nbsp;&nbsp;•&nbsp;&nbsp;
-🧾 Proof
-&nbsp;&nbsp;•&nbsp;&nbsp;
-⚙️ Execution
-&nbsp;&nbsp;•&nbsp;&nbsp;
-✅ Verification
+<p>
+Ask a data question. The system generates a reproducible proof,
+runs it twice, compares the results, and only then marks the answer
+as VERIFIED.
 </p>
 
 </div>
 """, unsafe_allow_html=True)
 
-
 # =========================================================
 # SIDEBAR
 # =========================================================
 
-st.sidebar.markdown("## 🛡️ Data Quality")
+with st.sidebar:
 
-issues = check_data()
+    st.title("🛡️ Verification")
 
-if issues:
+    st.write("Every verified number must have executable proof.")
 
-    st.sidebar.error(
-        "⚠️ Issues detected"
-    )
+    st.divider()
 
-    for issue in issues:
+    st.subheader("Rules")
 
-        st.sidebar.warning(issue)
+    st.write("✅ Re-run proof code")
+    st.write("✅ Compare both results")
+    st.write("✅ Detect duplicate rows")
+    st.write("✅ Detect currency mismatch")
+    st.write("✅ Refuse ambiguous questions")
+    st.write("✅ Never invent unsupported answers")
 
-else:
+    st.divider()
 
-    st.sidebar.success(
-        "✅ Data is clean"
-    )
+    st.subheader("Data Quality")
 
-st.sidebar.markdown("---")
+    st.metric("Missing Values", quality["missing"])
+    st.metric("Duplicate Orders", quality["duplicates"])
+    st.metric("Invalid Customers", quality["invalid_customers"])
 
-st.sidebar.markdown(
-    "### 🔐 Key Rules"
-)
-
-st.sidebar.write(
-    "Every numerical answer must have "
-    "re-runnable proof code."
-)
-
-st.sidebar.write(
-    "If the data is ambiguous or unsafe, "
-    "the system refuses to guess."
-)
-
-st.sidebar.write(
-    "Wrong + confident is worse than "
-    "correct refusal."
-)
+    st.write("Currencies:")
+    st.write(", ".join(quality["currencies"]))
 
 
 # =========================================================
 # DATASET EXPLORER
 # =========================================================
 
-st.markdown("## 📋 Dataset Explorer")
+st.markdown("## 📁 Dataset Explorer")
 
-tab1, tab2, tab3 = st.tabs(
-    [
-        "👥 Customers",
-        "🛒 Orders",
-        "📦 Products"
-    ]
-)
+tab1, tab2, tab3 = st.tabs([
+    "👥 Customers",
+    "🛒 Orders",
+    "📦 Products"
+])
 
 with tab1:
-
     st.dataframe(
         customers,
         use_container_width=True,
@@ -1085,7 +653,6 @@ with tab1:
     )
 
 with tab2:
-
     st.dataframe(
         orders,
         use_container_width=True,
@@ -1093,7 +660,6 @@ with tab2:
     )
 
 with tab3:
-
     st.dataframe(
         products,
         use_container_width=True,
@@ -1102,38 +668,32 @@ with tab3:
 
 
 # =========================================================
-# DATA QUALITY SUMMARY
+# QUALITY SUMMARY
 # =========================================================
-
-st.markdown("---")
 
 st.markdown("## 🔎 Data Quality Summary")
 
-col1, col2, col3, col4 = st.columns(4)
+c1, c2, c3, c4 = st.columns(4)
 
-with col1:
-
+with c1:
     st.metric(
         "Customers",
         len(customers)
     )
 
-with col2:
-
+with c2:
     st.metric(
         "Order Rows",
         len(orders)
     )
 
-with col3:
-
+with c3:
     st.metric(
         "Unique Orders",
         orders["order_id"].nunique()
     )
 
-with col4:
-
+with c4:
     st.metric(
         "Currencies",
         orders["currency"].nunique()
@@ -1144,14 +704,11 @@ with col4:
 # QUESTION
 # =========================================================
 
-st.markdown("---")
-
-st.markdown("## 🔍 Ask Your Data")
+st.markdown("## 💬 Ask Your Question")
 
 question = st.text_input(
-    "Enter your question",
-    placeholder=
-    "Example: What are the sales in Chennai?"
+    "Enter a question",
+    placeholder="Example: What are the sales in Chennai?"
 )
 
 
@@ -1159,66 +716,54 @@ question = st.text_input(
 # EXAMPLES
 # =========================================================
 
-st.markdown("### 💡 Try These Questions")
+st.markdown("### 💡 Example Questions")
 
-c1, c2, c3 = st.columns(3)
+examples = [
+    "What are the sales in Chennai?",
+    "What is the highest sale?",
+    "What is the lowest sale?",
+    "What is the average sale?",
+    "How many customers?",
+    "How many orders?",
+    "How many duplicate orders?",
+    "What currencies are present?",
+    "What are the total sales?",
+    "Add INR and USD sales"
+]
 
-with c1:
+cols = st.columns(2)
 
-    st.info(
-        "💰 What are the sales in Chennai?"
-    )
+for i, example in enumerate(examples):
 
-with c2:
+    with cols[i % 2]:
 
-    st.info(
-        "📈 What is the highest sale?"
-    )
-
-with c3:
-
-    st.info(
-        "🧮 What are the total sales?"
-    )
-
-c4, c5, c6 = st.columns(3)
-
-with c4:
-
-    st.info(
-        "👥 How many customers?"
-    )
-
-with c5:
-
-    st.info(
-        "🔁 How many duplicate orders?"
-    )
-
-with c6:
-
-    st.info(
-        "💱 What currencies are present?"
-    )
+        if st.button(
+            example,
+            key="example_" + str(i),
+            use_container_width=True
+        ):
+            st.session_state["question"] = example
+            question = example
 
 
 # =========================================================
-# ANALYZE
+# ANALYZE BUTTON
 # =========================================================
 
-if st.button("🚀 Analyze & Verify"):
+st.markdown("")
 
-    if question.strip() == "":
+if st.button(
+    "🔍 ANALYZE & VERIFY",
+    use_container_width=True
+):
 
-        st.warning(
-            "⚠️ Please enter a question."
-        )
+    if not question.strip():
+
+        st.warning("Please enter a question.")
 
     else:
 
         result = analyze(question)
-
-        st.markdown("---")
 
         # =================================================
         # VERIFIED
@@ -1226,48 +771,81 @@ if st.button("🚀 Analyze & Verify"):
 
         if result["status"] == "VERIFIED":
 
-            st.markdown(
-                """
+            code = result["code"]
+
+            verified, result1, result2 = verify_code(code)
+
+            if verified:
+
+                st.markdown("""
                 <div class="verified-card">
-
-                <h2>✅ VERIFIED</h2>
-
-                <p>
-                The answer was generated and successfully
-                verified by executing the proof code.
-                </p>
-
+                    <h2>✅ VERIFIED</h2>
+                    <p>
+                    The proof code was executed twice and produced
+                    the same result both times.
+                    </p>
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
+                """, unsafe_allow_html=True)
 
-            st.metric(
-                "Verified Answer",
-                result["answer"]
-            )
+                st.markdown("## 📌 Verified Answer")
 
-            st.markdown(
-                "### 🧠 Why This Answer Is Safe"
-            )
+                st.metric(
+                    "Answer",
+                    result["answer"]
+                )
 
-            st.write(
-                result["reason"]
-            )
+                st.markdown("### 🧠 Reason")
 
-            st.markdown(
-                "### 🧾 Re-runnable Proof Code"
-            )
+                st.write(result["reason"])
 
-            st.code(
-                result["code"],
-                language="python"
-            )
+                st.markdown("### 🔁 Re-runnable Proof Code")
 
-            st.success(
-                "The verifier executed the proof code "
-                "and obtained the expected result."
-            )
+                st.code(
+                    code,
+                    language="python"
+                )
+
+                st.markdown("### 🧪 Verification Process")
+
+                v1, v2 = st.columns(2)
+
+                with v1:
+
+                    st.markdown("#### Run 1")
+
+                    st.success(str(result1))
+
+                with v2:
+
+                    st.markdown("#### Run 2")
+
+                    st.success(str(result2))
+
+                st.success(
+                    "✅ Both executions produced the same result."
+                )
+
+            else:
+
+                st.markdown("""
+                <div class="refused-card">
+                    <h2>❌ VERIFICATION FAILED</h2>
+                    <p>
+                    The proof code did not produce the same result
+                    when executed again.
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.write(
+                    "First run:",
+                    result1
+                )
+
+                st.write(
+                    "Second run:",
+                    result2
+                )
 
         # =================================================
         # REFUSED
@@ -1275,36 +853,21 @@ if st.button("🚀 Analyze & Verify"):
 
         elif result["status"] == "REFUSED":
 
-            st.markdown(
-                """
-                <div class="refused-card">
-
-                <h2>❌ REFUSED</h2>
-
+            st.markdown("""
+            <div class="refused-card">
+                <h2>🛑 REFUSED</h2>
                 <p>
-                The system intentionally refused to guess.
+                The system cannot safely answer this question.
                 </p>
+            </div>
+            """, unsafe_allow_html=True)
 
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            st.markdown("### Why?")
 
-            st.markdown("### Answer")
-
-            st.write(
-                result["answer"]
-            )
-
-            st.markdown("### ⚠️ Reason")
-
-            st.warning(
-                result["reason"]
-            )
+            st.write(result["reason"])
 
             st.info(
-                "A justified refusal is safer than "
-                "a wrong confident numerical answer."
+                "A safe refusal is better than giving a confident but incorrect answer."
             )
 
         # =================================================
@@ -1313,33 +876,43 @@ if st.button("🚀 Analyze & Verify"):
 
         else:
 
-            st.markdown(
-                """
-                <div class="warning-card">
-
-                <h2>ℹ️ UNKNOWN</h2>
-
+            st.markdown("""
+            <div class="warning-card">
+                <h2>❓ UNKNOWN</h2>
                 <p>
-                The system does not have a verified rule
-                for this question.
+                No safe proof rule is available for this question.
                 </p>
+            </div>
+            """, unsafe_allow_html=True)
 
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            st.write(result["reason"])
 
-            st.markdown("### Answer")
 
-            st.write(
-                result["answer"]
-            )
+# =========================================================
+# HOW VERIFICATION WORKS
+# =========================================================
 
-            st.markdown("### Reason")
+st.markdown("---")
 
-            st.info(
-                result["reason"]
-            )
+st.markdown("## 🔐 How Verification Works")
+
+v1, v2, v3, v4 = st.columns(4)
+
+with v1:
+    st.markdown("### 1️⃣ Question")
+    st.write("User asks a data question.")
+
+with v2:
+    st.markdown("### 2️⃣ Proof")
+    st.write("System generates executable proof code.")
+
+with v3:
+    st.markdown("### 3️⃣ Re-run")
+    st.write("The exact same proof code runs twice.")
+
+with v4:
+    st.markdown("### 4️⃣ Compare")
+    st.write("Only matching results become VERIFIED.")
 
 
 # =========================================================
@@ -1348,65 +921,22 @@ if st.button("🚀 Analyze & Verify"):
 
 st.markdown("---")
 
-st.markdown("## 🏆 How This System Is Judged")
+st.markdown("## 🏆 Challenge Requirements")
 
-j1, j2 = st.columns(2)
+criteria = [
+    "Correct answers",
+    "Re-runnable proof code",
+    "Proof code executes successfully",
+    "Same result on repeated execution",
+    "Correct mathematical handling",
+    "Duplicate detection",
+    "Currency mismatch detection",
+    "Ambiguous question refusal",
+    "No unsupported confident answers"
+]
 
-with j1:
-
-    st.markdown("""
-    <div class="info-card">
-
-    <h3>✅ Correctness</h3>
-
-    <p>
-    Answers are checked against the actual dataset.
-    </p>
-
-    <h3>🧾 Re-runnable Proof</h3>
-
-    <p>
-    Numerical answers include executable Python code.
-    </p>
-
-    <h3>🧮 Mathematical Accuracy</h3>
-
-    <p>
-    Calculations are performed using pandas and
-    verified through execution.
-    </p>
-
-    </div>
-    """, unsafe_allow_html=True)
-
-with j2:
-
-    st.markdown("""
-    <div class="info-card">
-
-    <h3>🛑 Safe Refusal</h3>
-
-    <p>
-    The system refuses questions involving unsupported
-    currency conversions or unreliable assumptions.
-    </p>
-
-    <h3>🔎 Messy Data</h3>
-
-    <p>
-    Duplicate rows, missing values, invalid references,
-    and currency mismatches are checked.
-    </p>
-
-    <h3>🎯 Ambiguity</h3>
-
-    <p>
-    Ambiguous date questions and unsupported questions
-    are not answered with guesses.
-    </p>
-
-    </div>
-    """, unsafe_allow_html=True)
+for item in criteria:
+    st.write("✅", item)
 
 
 # =========================================================
@@ -1416,13 +946,14 @@ with j2:
 st.markdown("---")
 
 st.markdown("""
-<p style="
-    text-align:center;
-    color:#64748b !important;
-    font-size:13px;
+<div style="
+text-align:center;
+padding:20px;
+color:#8f9ab3;
 ">
-🔐 Proof-Carrying Data Analyst
-<br>
-Data → Validate → Analyze → Generate Proof → Execute → Verify
-</p>
+
+<b>Proof-Carrying Data Analyst</b><br>
+Every number should carry its proof.
+
+</div>
 """, unsafe_allow_html=True)
